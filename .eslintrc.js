@@ -27,5 +27,7 @@ module.exports = {
 
     'max-len': 'off',
 
+    'react/prop-types': 0,
+
   },
 };
