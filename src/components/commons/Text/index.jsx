@@ -8,6 +8,8 @@ export const TextBase = styled.span`
   ${propToStyle('textAlign')}
   ${propToStyle('margin')}
   ${propToStyle('padding')}
+  ${propToStyle('background')}
+  ${propToStyle('borderRadius')}
   font-family: ${({ theme, variant }) => get(theme, `typographyVariants.${variant}.fontFamily`)};
   font-size: ${({ theme, variant }) => get(theme, `typographyVariants.${variant}.fontSize`)};
   font-weight: ${({ theme, variant }) => get(theme, `typographyVariants.${variant}.fontWeight`)};

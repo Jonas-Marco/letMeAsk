@@ -33,7 +33,7 @@ export const colors = {
     },
     quaternary: {
       color: '#29292E',
-      contrastText: '#fff',
+      contrastText: '#29292E',
     },
   },
   modes: {

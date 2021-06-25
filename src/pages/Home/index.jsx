@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { HomeWrapper, Separetor } from './styles/HomeWrapper';
 import illustration from '../../assets/images/illustration.svg';
@@ -8,15 +8,32 @@ import Text from '../../components/commons/Text';
 import TextField from '../../components/forms/TextFild';
 import { Button } from '../../components/commons/Button';
 import { useAuth } from '../../hooks/useAuth';
+import { dataBase } from '../../service/firebase';
 
 export default function Home() {
   const history = useHistory();
   const { user, signInWithGoogle } = useAuth();
+  const [roomCode, setRoomCode] = useState('');
   async function handleCreateRoom() {
     if (!user) {
       await signInWithGoogle();
     }
     history.push('/rooms/new');
+  }
+
+  async function handleJoinRoom(event) {
+    event.preventDefault();
+    if (roomCode.trim() === '') {
+      // eslint-disable-next-line no-useless-return
+      return;
+    }
+
+    const roomRef = await dataBase.ref(`rooms/${roomCode}`).get();
+    if (!roomRef.exists()) {
+      alert('Room does not exists.');
+      return;
+    }
+    history.push(`/rooms/${roomCode}`);
   }
 
   return (
@@ -52,6 +69,7 @@ export default function Home() {
             color="primary"
             margin="64px 0 0 0"
             onClick={handleCreateRoom}
+            fullWidth
           >
             <img
               src={googleIcon}
@@ -71,10 +89,12 @@ export default function Home() {
             </Text>
           </Separetor>
 
-          <form>
+          <form onSubmit={handleJoinRoom}>
             <TextField
               type="text"
               placeholder="Digita o código da sala"
+              onChange={(event) => setRoomCode(event.target.value)}
+              vaue={roomCode}
             />
 
             <Button
@@ -82,6 +102,7 @@ export default function Home() {
               variant="secondary"
               color="primary"
               margin="16px 0 0 0"
+              fullWidth
             >
               Entrar na sala
             </Button>

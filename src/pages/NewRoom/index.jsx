@@ -1,13 +1,33 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useHistory } from 'react-router-dom';
 import { NewRoomWrapper } from './styles/NewRoomWrapper';
 import illustration from '../../assets/images/illustration.svg';
 import Logo from '../../components/commons/Logo';
 import Text from '../../components/commons/Text';
 import TextField from '../../components/forms/TextFild';
 import { Button } from '../../components/commons/Button';
+import { dataBase } from '../../service/firebase';
+import { useAuth } from '../../hooks/useAuth';
 
 export default function NewRoom() {
+  const { user } = useAuth();
+  const [newRoom, setNewRoom] = useState('');
+  const history = useHistory();
+  async function handleCreateRoom(event) {
+    event.preventDefault();
+
+    if (newRoom.trim() === '') {
+      // eslint-disable-next-line no-useless-return
+      return;
+    }
+
+    const roomRef = dataBase.ref('rooms');
+    const firebaseRoom = await roomRef.push({
+      title: newRoom,
+      authorId: user.id,
+    });
+    history.push(`/rooms/${firebaseRoom.key}`);
+  }
   return (
     <NewRoomWrapper>
       <NewRoomWrapper.AsideWrapper>
@@ -43,10 +63,12 @@ export default function NewRoom() {
           >
             Criar uma nova sala
           </Text>
-          <form>
+          <form onSubmit={handleCreateRoom}>
             <TextField
               type="text"
               placeholder="Nome da sala"
+              onChange={(event) => setNewRoom(event.target.value)}
+              value={newRoom}
             />
 
             <Button
